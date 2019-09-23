@@ -18,75 +18,88 @@ using namespace std;
 
 // --- CONSTANTS --- //
 
-const int
-WINDOW_WIDTH = 640, WINDOW_HEIGHT = 480, WINDOW_START_POS_X = 50,
-		WINDOW_START_POS_Y = 50;
+const int	WINDOW_WIDTH = 640,
+			WINDOW_HEIGHT = 480,
+			WINDOW_START_POS_X = 50,
+			WINDOW_START_POS_Y = 50;
 
-const float DENSITY = 1.0f, ACCEL_GRAVITY = 981.0f;
+const float CUBE_SIZE = 0.5f;
 
-const float colors[12][3] = { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, {
-		0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 0.0f }, { 1.0f, 0.0f, 1.0f }, { 0.0f,
-		1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, { 0.9f, 0.9f, 0.9f }, { 0.8f, 0.8f, 0.8f }, { 0.7f, 0.7f, 0.7f }, { 0.6f, 0.6f, 0.6f }, {0.0f, 0.0f, 0.0f} };
+const float colors[12][3] = {
+			{1.0f, 0.0f, 0.0f},
+			{0.0f, 1.0f, 0.0f},
+			{0.0f, 0.0f, 1.0f},
+			{1.0f, 1.0f, 0.0f},
+			{1.0f, 0.0f, 1.0f},
+			{0.0f, 1.0f, 1.0f},
+			{1.0f, 1.0f, 1.0f},
+			{0.9f, 0.9f, 0.9f},
+			{0.8f, 0.8f, 0.8f},
+			{0.7f, 0.7f, 0.7f},
+			{0.6f, 0.6f, 0.6f},
+			{0.0f, 0.0f, 0.0f}};
 
 // --- DELTA VARS --- //
 
-int delta = 0,
-ts= 0,
-_ts = 0;
-
-float _size = 0.5f;
-float size = _size / 2.0f,
-
-bound_x = 1.0f, bound_y = 1.0f, bound_z = 0.0f,
-
-_bound_x = -1.0f, _bound_y = -1.0f, _bound_z = -10.0f,
-
-pos_x = 0.0f, pos_y = 0.0f, pos_z = -8.0f,
-
-vel_x = 0.5f, vel_y = 1.0f, vel_z = -1.0f,
-
-pitch = 60.0f, yaw = 12.0f, roll = 15.0f,
-
-vel_yaw = 22.0f, vel_pitch = 36.0f, vel_roll = 3.0f;
+int 		delta = 0,
+			ts= 0,
+			_ts = 0;
 
 
-float
-_pos_x,
-_pos_y,
-_pos_z,
-_pitch,
-_yaw,
-_roll;
+float 		_size = CUBE_SIZE / 2.0f,
+			bound_x_right = 1.0f,
+			bound_y_top = 1.0f,
+			bound_z_close = 0.0f,
+			bound_x_left = -1.0f,
+			bound_y_bottom = -1.0f,
+			bound_z_far = -10.0f,
+			pos_x = 0.0f,
+			pos_y = 0.0f,
+			pos_z = -8.0f,
+			pitch = 60.0f,
+			yaw = 12.0f,
+			roll = 15.0f,
+			vel_x = 0.5f,
+			vel_y = 1.0f,
+			vel_z = -1.0f,
+			vel_yaw = 22.0f,
+			vel_pitch = 36.0f,
+			vel_roll = 45.0f,
+			_pos_x,
+			_pos_y,
+			_pos_z,
+			_pitch,
+			_yaw,
+			_roll;
 
-glm::vec4 	starting_position = glm::vec4(pos_x, pos_y, pos_z, 1.0f),
-			starting_rotation = glm::vec4(pitch, yaw, roll, 1.0f),
-			velocity = glm::vec4(vel_x, vel_y, vel_z, 1.0f),
-			rotation = glm::vec4(vel_pitch, vel_yaw,vel_roll, 1.0f),
-			vert0 = glm::vec4(-size, size, size, 1.0f),
-			vert1 = glm::vec4(-size, size, -size, 1.0f),
-			vert2 = glm::vec4(size, size, -size, 1.0f),
-			vert3 = glm::vec4(size, size, size, 1.0f),
-			vert4 = glm::vec4(-size, -size, size, 1.0f),
-			vert5 = glm::vec4(-size, -size, -size, 1.0f),
-			vert6 = glm::vec4(size, -size, -size, 1.0f),
-			vert7 = glm::vec4(size, -size, size, 1.0f),
-			center = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+list<glm::vec4*>
+			verts;
+
+glm::vec4 	vert0 = glm::vec4(-_size, _size, _size, 1.0f),
+			vert1 = glm::vec4(-_size, _size, -_size, 1.0f),
+			vert2 = glm::vec4(_size, _size, -_size, 1.0f),
+			vert3 = glm::vec4(_size, _size, _size, 1.0f),
+			vert4 = glm::vec4(-_size, -_size, _size, 1.0f),
+			vert5 = glm::vec4(-_size, -_size, -_size, 1.0f),
+			vert6 = glm::vec4(_size, -_size, -_size, 1.0f),
+			vert7 = glm::vec4(_size, -_size, _size, 1.0f),
+			_vert0,
+			_vert1,
+			_vert2,
+			_vert3,
+			_vert4,
+			_vert5,
+			_vert6,
+			_vert7;
 
 
-glm::vec4
-_vert0,
-_vert1,
-_vert2,
-_vert3,
-_vert4,
-_vert5,
-_vert6,
-_vert7;
 
 
-list<glm::vec4*> verts;
+glm::mat4x4 mat_transform,
+			mat_translate,
+			mat_scale,
+			mat_rot;
 
-glm::mat4x4 mat_transform, mat_translate, mat_scale, mat_rot;
 
 void build_translate(float x, float y, float z) {
 	float m[16] = { 1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1 };
@@ -175,17 +188,17 @@ void check_collide(){
 	bool d_x = true, d_y = true, d_z = true;
 	for(list<glm::vec4*>::iterator iterator = verts.begin(); iterator != verts.end(); iterator++){
 		glm::vec4* t = *iterator;
-		if((t->x >= bound_x || t->x <= _bound_x) && d_x){
+		if((t->x >= bound_x_right || t->x <= bound_x_left) && d_x){
 			vel_x *=-1;
 			d_x = false;
 		}
 
-		if((t->y >= bound_y || t->y <= _bound_y) && d_y){
+		if((t->y >= bound_y_top || t->y <= bound_y_bottom) && d_y){
 			vel_y *=-1;
 			d_y = false;
 		}
 
-		if((t->z >= bound_z || t->z <= _bound_z) && d_z){
+		if((t->z >= bound_z_close || t->z <= bound_z_far) && d_z){
 			vel_z *=-1;
 			d_z = false;
 		}
@@ -193,12 +206,6 @@ void check_collide(){
 		if(!d_x || !d_y || !d_z) pos_step_back();
 	}
 }
-
-/*
- * Yaw = Y
- * Pitch = X
- * Roll = Z
- */
 
 void display() {
 	update_delta();
@@ -263,58 +270,56 @@ void display() {
 
 	//LEFT
 	update_color(6);
-	draw_face(glm::vec4(_bound_x, _bound_y, 0.0f, 1.0f), glm::vec4(_bound_x, _bound_y, _bound_z, 1.0f),
-			glm::vec4(_bound_x, bound_y, _bound_z, 1.0f), glm::vec4(_bound_x, bound_y, 0.0f, 1.0f));
+	draw_face(glm::vec4(bound_x_left, bound_y_bottom, 0.0f, 1.0f), glm::vec4(bound_x_left, bound_y_bottom, bound_z_far, 1.0f),
+			glm::vec4(bound_x_left, bound_y_top, bound_z_far, 1.0f), glm::vec4(bound_x_left, bound_y_top, 0.0f, 1.0f));
 
 	//RIGHT
 	update_color(8);
-	draw_face(glm::vec4(bound_x, _bound_y, 0.0f, 1.0f), glm::vec4(bound_x, _bound_y, _bound_z, 1.0f),
-			glm::vec4(bound_x, bound_y, _bound_z, 1.0f), glm::vec4(bound_x, bound_y, 0.0f, 1.0f));
+	draw_face(glm::vec4(bound_x_right, bound_y_bottom, 0.0f, 1.0f), glm::vec4(bound_x_right, bound_y_bottom, bound_z_far, 1.0f),
+			glm::vec4(bound_x_right, bound_y_top, bound_z_far, 1.0f), glm::vec4(bound_x_right, bound_y_top, 0.0f, 1.0f));
 
 	//CEIL
 	update_color(9);
-	draw_face(glm::vec4(_bound_x, bound_y, 0.0f, 1.0f), glm::vec4(_bound_x, bound_y, _bound_z, 1.0f),
-			glm::vec4(bound_x, bound_y, _bound_z, 1.0f), glm::vec4(bound_x, bound_y, 0.0f, 1.0f));
+	draw_face(glm::vec4(bound_x_left, bound_y_top, 0.0f, 1.0f), glm::vec4(bound_x_left, bound_y_top, bound_z_far, 1.0f),
+			glm::vec4(bound_x_right, bound_y_top, bound_z_far, 1.0f), glm::vec4(bound_x_right, bound_y_top, 0.0f, 1.0f));
 
 	//FLOOR
 	update_color(7);
-	draw_face(glm::vec4(_bound_x, _bound_y, 0.0f, 1.0f), glm::vec4(_bound_x, _bound_y, _bound_z, 1.0f),
-			glm::vec4(bound_x, _bound_y, _bound_z, 1.0f), glm::vec4(bound_x, _bound_y, 0.0f, 1.0f));
+	draw_face(glm::vec4(bound_x_left, bound_y_bottom, 0.0f, 1.0f), glm::vec4(bound_x_left, bound_y_bottom, bound_z_far, 1.0f),
+			glm::vec4(bound_x_right, bound_y_bottom, bound_z_far, 1.0f), glm::vec4(bound_x_right, bound_y_bottom, 0.0f, 1.0f));
 
 	//BACK
 	update_color(10);
-	draw_face(glm::vec4(_bound_x, _bound_y, _bound_z, 1.0f), glm::vec4(_bound_x, bound_y, _bound_z, 1.0f),
-			glm::vec4(bound_x, bound_y, _bound_z, 1.0f), glm::vec4(bound_x, _bound_y, _bound_z, 1.0f));
+	draw_face(glm::vec4(bound_x_left, bound_y_bottom, bound_z_far, 1.0f), glm::vec4(bound_x_left, bound_y_top, bound_z_far, 1.0f),
+			glm::vec4(bound_x_right, bound_y_top, bound_z_far, 1.0f), glm::vec4(bound_x_right, bound_y_bottom, bound_z_far, 1.0f));
 
 	glEnd();
 
+	//DOOR
 	glLineWidth(5.0f);
-
 	glBegin(GL_LINES);
 		glColor3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, _bound_y, _bound_z);
-		glVertex3f(0.0f, bound_y, _bound_z);
+		glVertex3f(0.0f, bound_y_bottom, bound_z_far);
+		glVertex3f(0.0f, bound_y_top, bound_z_far);
 
 
 	glEnd();
 
-
+	//TEXT
 	glRasterPos3f(-0.9f, 0.5f, -9.99f);
 	const unsigned char* t = reinterpret_cast<const unsigned char *>("Bouncing\nCube\nMoving Co.");
 	glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_10, t);
 
 
-	//Push back buffer
+	//Push back buffer & Update Display
 	glutSwapBuffers();
 	glutPostRedisplay();
 
 }
 
 void reshape(GLsizei width, GLsizei height) {
-	if (height == 0)
-		height++;
+	if (height == 0) height++;
 	GLfloat aspect = (GLfloat) width / (GLfloat) height;
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, width, height);
@@ -323,6 +328,7 @@ void reshape(GLsizei width, GLsizei height) {
 
 int main(int argc, char** argv) {
 
+	//Add to list
 	verts.push_back(&_vert0);
 	verts.push_back(&_vert1);
 	verts.push_back(&_vert2);
@@ -343,12 +349,12 @@ int main(int argc, char** argv) {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glShadeModel(GL_FLAT);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	//glOrtho( 0.f, WINDOW_X, WINDOW_Y, 0.f, 0.f, 1.f );
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 
-	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	glutMainLoop();
 	return 0;
