@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include <cstdlib>
+#include <stdlib.h>
 #include <windef.h>
 #include <GL/freeglut.h>
 #include <cmath>
@@ -11,6 +12,7 @@
 #include <list>
 #include <iterator>
 #include <algorithm>
+#include <windows.h>
 
 #define PI 3.14159265
 
@@ -43,7 +45,9 @@ const float colors[12][3] = {
 
 int 		delta = 0,
 			ts= 0,
-			_ts = 0;
+			_ts = 0,
+			color_count = 0,
+			_color_count = 0;
 
 
 float 		_size = CUBE_SIZE / 2.0f,
@@ -62,7 +66,7 @@ float 		_size = CUBE_SIZE / 2.0f,
 			vel_x = 0.5f,
 			vel_y = 1.0f,
 			vel_z = -1.0f,
-			vel_yaw = 22.0f,
+			vel_yaw = 20.0f,
 			vel_pitch = 36.0f,
 			vel_roll = 45.0f,
 			_pos_x,
@@ -176,6 +180,23 @@ void pos_update() {
 }
 
 void pos_step_back(){
+/*
+	color_count = glutGet(GLUT_ELAPSED_TIME) - _color_count;
+
+	if(color_count > 500) {
+		const char *hex_digits = "0123456789ABCDEF";
+		string hex;
+
+		for(int i = 0; i < 6; i++) {
+			hex += hex_digits[rand() % 16];
+		}
+
+		string str = "cmd /c tuya-cli set --id ebe1042eb1b0ba2d592vao --key 9827bd6b9e9bbb1f --ip 192.168.8.213 --protocol-version 3.3 --dps 5 --set " + hex + "002effff";
+		WinExec(str.c_str(), SW_HIDE);
+		cout << str << endl;
+		_color_count = glutGet(GLUT_ELAPSED_TIME);
+	}
+*/
 	pos_x = _pos_x,
 	pos_y = _pos_y,
 	pos_z = _pos_z,
